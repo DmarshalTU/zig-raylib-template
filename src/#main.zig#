@@ -4,9 +4,6 @@ const rl = @cImport({
 });
 const print = @import("std").debug.print;
 
-// Embedded
-const player_texture = @embedFile("assets/cat_run.png");
-
 pub fn main() anyerror!void {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -14,24 +11,20 @@ pub fn main() anyerror!void {
     const screenHeight = 450;
 
     var player_position = rl.Vector2{ .x = 640, .y = 320 };
-    //const player_size = rl.Vector2{ .x = 64, .y = 64 };
+    const player_size = rl.Vector2{ .x = 64, .y = 64 };
     var player_velocity = rl.Vector2{ .x = 0, .y = 0 };
     var player_grounded: bool = false;
-    //const frames = 4;
+
+    // Assets
+    //--------------------------------------------------------------------------------------
+    // const player_run_texture = rl.loadTexture("assets/cat_run.png");
+    // defer rl.unloadTexture(player_run_texture);
 
     rl.InitWindow(screenWidth, screenHeight, "raylib-zig [core] example - basic window");
     defer rl.CloseWindow(); // Close window and OpenGL context
 
-    // Assets
-    //--------------------------------------------------------------------------------------
-    const player_run_texture_mem = rl.LoadImageFromMemory(".png", player_texture, player_texture.len);
-    const p_texture = rl.LoadTextureFromImage(player_run_texture_mem);
-    const player_source = rl.Rectangle{ .x = 0, .y = 0, .width = 16, .height = 16 };
-
-    print("PH: {}\nPW: {}\n", .{ p_texture.height, p_texture.width });
-    defer rl.UnloadTexture(p_texture);
-
     rl.SetTargetFPS(60); // Set our game to run at 60 frames-per-second
+    //--------------------------------------------------------------------------------------
 
     // Main game loop
     while (!rl.WindowShouldClose()) { // Detect window close button or ESC key
@@ -40,8 +33,10 @@ pub fn main() anyerror!void {
         // TODO: Update your variables here
         //----------------------------------------------------------------------------------
         if (rl.IsKeyDown(rl.KEY_A)) {
+            print("A pressed\n", .{});
             player_velocity.x -= 400 * rl.GetFrameTime();
         } else if (rl.IsKeyDown(rl.KEY_D)) {
+            print("D pressed\n", .{});
             player_velocity.x += 400 * rl.GetFrameTime();
         } else {
             player_velocity.x = 0;
@@ -50,6 +45,7 @@ pub fn main() anyerror!void {
         player_velocity.y += 2000 * rl.GetFrameTime();
 
         if (rl.IsKeyPressed(rl.KEY_SPACE) and player_grounded) {
+            print("SPACE pressed\n", .{});
             player_velocity.y = -600;
             player_grounded = false;
         }
@@ -76,9 +72,10 @@ pub fn main() anyerror!void {
 
         rl.ClearBackground(rl.WHITE);
 
-        rl.DrawText("Congrats! You created your first window!", 190, 200, 20, rl.BLACK);
-        rl.DrawTextureRec(p_texture, player_source, player_position, rl.BLACK);
-        //rl.DrawTextureV(p_texture, player_position, rl.BLACK);
+        rl.DrawText("Congrats! You created your first window!", 190, 200, 20, rl.WHITE);
+        // rl.drawTextureV(player_texture, 100, 100);
+        rl.DrawRectangleV(player_position, player_size, rl.GREEN);
+        // rl.drawTextureV(player_run_texture, player_position, rl.WHITE);
         //----------------------------------------------------------------------------------
 
         rl.DrawFPS(10, 10);
