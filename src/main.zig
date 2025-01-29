@@ -57,6 +57,16 @@ pub fn main() anyerror!void {
             player_grounded = true;
         }
 
+        if (player_position.x >= @as(f32, @floatFromInt(rl.GetScreenWidth())) - 64) {
+            player_position.x = @as(f32, @floatFromInt(rl.GetScreenWidth())) - 64;
+            player_grounded = true;
+        }
+
+        if (player_position.x <= 0) {
+            player_position.x = 0;
+            player_grounded = true;
+        }
+
         player_run_frame_timer += rl.GetFrameTime();
 
         if (player_run_frame_timer > player_run_frame_length) {
